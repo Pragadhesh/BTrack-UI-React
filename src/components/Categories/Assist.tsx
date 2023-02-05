@@ -6,7 +6,7 @@ import {
   Modal,
 } from "@mui/material";
 import { useState } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 
 function Assist() {
   const [isLoading, setIsLoading] = useState(false);
@@ -69,7 +69,9 @@ function Assist() {
               </Button>
             </ButtonGroup>
             <div className="flex self-center justify-end w-full">
-              <Button variant="outlined">Add Assistant</Button>
+              <Link to={"/btrack/assist/add"}>
+                <Button variant="outlined">Add Assistant</Button>
+              </Link>
             </div>
           </div>
           <div className="flex w-full h-full">

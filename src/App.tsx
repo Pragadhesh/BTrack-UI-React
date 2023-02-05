@@ -14,6 +14,7 @@ import People from "./components/Categories/Assistance/People";
 import Requests from "./components/Categories/Assistance/Requests";
 import Manage from "./components/Categories/Assistance/Manage";
 import Details from "./components/Categories/Assistance/Details";
+import AddAssistant from "./components/Categories/Assistance/AddAssistant";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -64,6 +65,7 @@ function App() {
               <Route path="manage" element={<Manage />} />
             </Route>
             <Route path="assist/people/:name" element={<Details />}></Route>
+            <Route path="assist/add" element={<AddAssistant />}></Route>
           </Route>
         </>
       )}
