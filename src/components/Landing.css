@@ -1,0 +1,47 @@
+.inactivebutton {
+    background-color: white;
+    color: #3E5060;
+}
+.inactivebutton:hover {
+    background-color: #F3F6F9;
+    color: #1D1D1D;
+}
+.activebutton {
+    background-color: #F0F7FF;
+    color: #0072e5;
+}
+.activebutton:hover {
+    color: #0072E5;
+    background-color: rgba(0, 127, 255, 0.12);
+}
+
+.activealert {
+    background-color: rgba(199, 11, 11, 0.07);
+    color: #ea0000;
+}
+.activealert:hover {
+    background-color: rgba(199, 11, 11, 0.09);
+    color: #ea0000;
+}
+
+.inactivealert {
+    background-color: white;
+    color: #D32F2F;
+}
+.inactivealert:hover {
+    color: #D32F2F;
+    background-color: rgba(211, 47, 47, 0.04);
+}
+
+.inactiveassist {
+    background-color: white;
+}
+.inactiveassist:hover {
+    background-color: #F3F6F9;
+}
+.activeassist {
+    background-color: #F0F7FF;
+}
+.activeassist:hover {
+    background-color: rgba(0, 127, 255, 0.12);
+}

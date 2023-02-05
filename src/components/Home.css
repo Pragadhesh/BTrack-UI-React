@@ -1,0 +1,5 @@
+.homescreen {
+    background-image: url("../assets/images/homescreen.jpg");
+    background-size: cover;
+    border-radius: 2;
+}

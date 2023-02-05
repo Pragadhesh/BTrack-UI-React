@@ -1,0 +1,17 @@
+{
+    "serum" : [
+        {
+        "name" : "Advanced Night Repair",
+        "description": "Synchronized Multi-Recovery Complex",
+        "logo": "https://www.esteelauder.in/media/export/cms/products/308x424/el_sku_PMG501_308x424_0.jpg",
+        "health": 50
+        }
+    ],
+    "serum1": [
+        {
+        "name" : "Advanced Night Repair",
+        "description": "Synchronized Multi-Recovery Complex",
+        "logo": "https://www.esteelauder.in/media/export/cms/products/308x424/el_sku_PMG501_308x424_0.jpg"
+        }
+    ]
+}

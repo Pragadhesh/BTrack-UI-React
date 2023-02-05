@@ -1,0 +1,17 @@
+.product {
+    background-size: cover;
+}
+
+.health {
+    border: 1px solid #0369A1;
+}
+
+.category:hover {
+    text-decoration: underline;
+}
+
+.notes {
+    border: 1px solid #cbd5e1;
+    background-color: white;
+}
+

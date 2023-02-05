@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Comfortaa';
+  src: url(./assets/fonts/Comfortaa/static/Comfortaa-Light.ttf);
+}
+
+@font-face {
+  font-family: 'Playfair';
+  src: url(./assets/fonts/Playfair_Display/static/PlayfairDisplay-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'Solitreo';
+  src: url(./assets/fonts/Solitreo/Solitreo-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'Dancing-Script';
+  src: url(./assets/fonts/Dancing_Script/static/DancingScript-Regular.ttf);
+}
+
+@font-face {
+  font-family: Optima-Roman;
+  src: url("//db.onlinewebfonts.com/t/c78d5ac2e0567f3d7abc24629e42741f.ttf") format("truetype");
+}
