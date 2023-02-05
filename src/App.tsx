@@ -13,6 +13,7 @@ import Assist from "./components/Categories/Assist";
 import People from "./components/Categories/Assistance/People";
 import Requests from "./components/Categories/Assistance/Requests";
 import Manage from "./components/Categories/Assistance/Manage";
+import Details from "./components/Categories/Assistance/Details";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -44,6 +45,7 @@ function App() {
       )}
       {isLoggedIn && (
         <>
+          <Route path="/home" element={<Navigate to="/btrack" />}></Route>
           <Route path="/btrack" element={<Landing setLoggedIn={setLoggedIn} />}>
             <Route path="" element={<Navigate to="skincare" />}></Route>
             <Route path="skincare" element={<Skincare />} />
@@ -61,8 +63,8 @@ function App() {
               <Route path="requests" element={<Requests />} />
               <Route path="manage" element={<Manage />} />
             </Route>
+            <Route path="assist/people/:name" element={<Details />}></Route>
           </Route>
-          <Route path="/*" element={<Navigate to="/btrack" />}></Route>
         </>
       )}
     </Routes>

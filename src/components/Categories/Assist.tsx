@@ -1,4 +1,10 @@
-import { Box, Button, ButtonGroup, CircularProgress } from "@mui/material";
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  CircularProgress,
+  Modal,
+} from "@mui/material";
 import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 
