@@ -30,7 +30,7 @@ function Routine({
         ? selectedMonthly
         : 0
     );
-  }, [category, health, selectedWeekly, selectedMonthly, setUpdatedCategories]);
+  }, [category, health, selectedWeekly, selectedMonthly]);
 
   return (
     <div className="grid grid-flow-row gap-2 w-full">

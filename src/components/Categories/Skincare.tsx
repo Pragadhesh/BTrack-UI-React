@@ -1,10 +1,13 @@
 import { Box, Button, CircularProgress, Modal } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import "./Shared.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAsyncError, useNavigate } from "react-router-dom";
 import Routine from "./Shared/Routine";
 import AddProduct from "./Shared/AddProducts";
+import { BACKEND_URL } from "../../constants/backendurl";
+import axios from "axios";
+import { Products } from "../../interfaces/Products";
 
 const modalstyle = {
   position: "absolute" as "absolute",
@@ -35,11 +38,7 @@ const categorystyle = {
 };
 
 function Skincare() {
-  const skincareitems = [
-    {
-      name: "pragadhesh",
-    },
-  ];
+  const [skincareitems, setSkinCareItems] = useState<Products>([]);
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -61,6 +60,23 @@ function Skincare() {
   const [upcategory, setUpCategory] = useState("");
   const [updays, setUpDays] = useState("");
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}product/skincare`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+          },
+        });
+        setSkinCareItems(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, [skincareitems]);
+
   const update = () => {
     console.log("Item updated successfully");
   };
@@ -75,12 +91,16 @@ function Skincare() {
     name: any,
     description: any,
     bgimage: any,
-    health: any
+    health: any,
+    upcategory: any,
+    updays: any
   ) {
     setUpname(name);
     setUpdescription(description);
     setUpbgimage(bgimage);
     setuphealth(health);
+    setUpCategory(upcategory);
+    setUpDays(updays);
     handleOpen();
   }
 
@@ -201,9 +221,9 @@ function Skincare() {
                   <div className="flex flex-col w-full ">
                     <Routine
                       setUpdatedCategories={setUpdatedCategories}
-                      category={"weekly"}
-                      health={50}
-                      days={3}
+                      category={upcategory}
+                      health={uphealth}
+                      days={updays}
                     />
                   </div>
                 </div>
@@ -234,63 +254,86 @@ function Skincare() {
               No Items found
             </div>
           )}
-          {skincareitems.length != 0 && (
-            <div className="flex flex-col w-full">
-              <div className="flex justify-start font-playfair text-3xl font-bold text-sky-700">
-                Serum
-              </div>
-              <div className="grid w-full h-full grid-flow-row grid-cols-3 pt-5 gap-3 gap-y-7">
-                <div className="flex flex-col w-52">
-                  <div
-                    className="flex justify-end bg-red-500 w-full h-72 rounded product"
-                    style={{
-                      backgroundImage: `url("https://www.esteelauder.in/media/export/cms/products/308x424/el_sku_PMG501_308x424_0.jpg")`,
-                    }}
-                  >
-                    <div className="relative top-0 right-0 pt-0 pr-2">
-                      <button
-                        onClick={() =>
-                          openModalforUpdate(
-                            "Advanced Night Repair",
-                            "Synchronized Multi-Recovery Complex will cause this issue",
-                            "https://www.esteelauder.in/media/export/cms/products/308x424/el_sku_PMG501_308x424_0.jpg",
-                            "50"
-                          )
-                        }
-                      >
-                        <EditIcon color="primary" />
-                      </button>
-                    </div>
+          {skincareitems.length != 0 &&
+            skincareitems.map((category) => {
+              return (
+                <div className="flex flex-col w-full pt-5">
+                  <div className="flex justify-start font-playfair text-3xl font-bold text-sky-700">
+                    {category.category.charAt(0).toUpperCase() +
+                      category.category.slice(1)}
                   </div>
-                  <div className="flex justify-start font-optimaroman font-normal text-lg pt-2">
-                    Advanced Night Repair
-                  </div>
-                  <div className="flex justify-start font-optimaroman font-light text-sm pt-2 text-zinc-400">
-                    Synchronized Multi-Recovery Complex will cause this issue
-                  </div>
-                  <div
-                    className="relative w-full h-3 mt-2 rounded health"
-                    title={`Health: ${30}%`}
-                  >
-                    <div
-                      className={`absolute h-full left-0 top-0 rounded ${getHealthColor(
-                        90
-                      )}`}
-                      style={{
-                        width: `${90}%`,
-                        animation: "fill-bar 2s ease-in-out",
-                      }}
-                    ></div>
-                    <div className="absolute h-full right-0 top-0">
-                      <span className="text-white text-center absolute w-full h-full top-0 left-0">
-                        {100 - 90}%
-                      </span>
-                    </div>
+                  <div className="grid w-full h-full grid-flow-row grid-cols-3 pt-5 gap-3 gap-y-7">
+                    {category.products.map((item) => {
+                      return (
+                        <div className="flex flex-col w-52">
+                          <div
+                            className="flex justify-end bg-red-500 w-full h-72 rounded product"
+                            style={{
+                              backgroundImage: `url(${item.image_url})`,
+                            }}
+                          >
+                            <div className="relative top-0 right-0 pt-0 pr-2">
+                              <button
+                                onClick={() =>
+                                  openModalforUpdate(
+                                    item.name,
+                                    item.description,
+                                    item.image_url,
+                                    item.health,
+                                    item.usage,
+                                    item.days
+                                  )
+                                }
+                              >
+                                <EditIcon color="primary" />
+                              </button>
+                            </div>
+                          </div>
+                          <div
+                            className="flex justify-start font-optimaroman font-normal text-lg pt-2 h-10"
+                            style={{
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              whiteSpace: "nowrap",
+                            }}
+                            title={item.name}
+                          >
+                            {item.name}
+                          </div>
+                          <div className="flex justify-start font-optimaroman font-light text-sm h-12 items-center pt-2 text-zinc-400">
+                            <div
+                              className="text-overflow-ellipsis"
+                              title={item.description}
+                            >
+                              {item.description}
+                            </div>
+                          </div>
+                          <div
+                            className="relative w-full h-3 mt-2 rounded health"
+                            title={`Health: ${item.health}%`}
+                          >
+                            <div
+                              className={`absolute h-full left-0 top-0 rounded ${getHealthColor(
+                                item.health
+                              )}`}
+                              style={{
+                                width: `${item.health}%`,
+                                animation: "fill-bar 2s ease-in-out",
+                              }}
+                            ></div>
+                            <div className="absolute h-full right-0 top-0">
+                              <span className="text-white text-center absolute w-full h-full top-0 left-0">
+                                {100 - item.health}%
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
+              );
+            })}
         </div>
       )}
     </div>
