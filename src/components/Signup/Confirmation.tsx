@@ -4,6 +4,8 @@ import TextField from "@mui/material/TextField";
 import Userpool from "../Userpool";
 import * as AmazonCognitoIdentity from "amazon-cognito-identity-js";
 import { Box, CircularProgress } from "@mui/material";
+import { BACKEND_URL } from "../../constants/backendurl";
+import axios from "axios";
 
 export default function Confirmation(props: any) {
   const [verificationcode, setVerificationCode] = useState("");
@@ -43,21 +45,35 @@ export default function Confirmation(props: any) {
           setResendVerificationEmail(false);
           cognitoUser.authenticateUser(authenticationDetails, {
             onSuccess: function (result) {
-              localStorage.setItem("loggedIn", "true");
-              localStorage.setItem(
-                "accessToken",
-                result.getAccessToken().getJwtToken()
-              );
-              localStorage.setItem(
-                "idToken",
-                result.getIdToken().getJwtToken()
-              );
-              localStorage.setItem(
-                "refreshToken",
-                result.getRefreshToken().getToken()
-              );
-              props.checkLoginStatus(true);
-              setLoading(false);
+              axios
+                .post(`${BACKEND_URL}user/add`, null, {
+                  headers: {
+                    Authorization: `Bearer ${result
+                      .getIdToken()
+                      .getJwtToken()}`,
+                  },
+                })
+                .then((response) => {
+                  localStorage.setItem("loggedIn", "true");
+                  localStorage.setItem(
+                    "accessToken",
+                    result.getAccessToken().getJwtToken()
+                  );
+                  localStorage.setItem(
+                    "idToken",
+                    result.getIdToken().getJwtToken()
+                  );
+                  localStorage.setItem(
+                    "refreshToken",
+                    result.getRefreshToken().getToken()
+                  );
+                  props.checkLoginStatus(true);
+                  setLoading(false);
+                })
+                .catch((error) => {
+                  console.error(error);
+                  setLoading(false);
+                });
             },
             onFailure: function (err) {
               console.log(err);
@@ -105,6 +121,11 @@ export default function Confirmation(props: any) {
               size="small"
               className="flex w-72 text-sm"
               onChange={(event) => setVerificationCode(event.target.value)}
+              onKeyPress={(event) => {
+                if (event.key === "Enter") {
+                  confirmAuthentication();
+                }
+              }}
             />
           </div>
           {invalidverificationcode && (

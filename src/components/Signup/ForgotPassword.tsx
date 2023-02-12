@@ -169,6 +169,11 @@ function ForgotPassword(props: any) {
                     className="flex w-72 text-sm"
                     value={confirmpassword}
                     onChange={(event) => setConfirmPassword(event.target.value)}
+                    onKeyPress={(event) => {
+                      if (event.key === "Enter") {
+                        confirmPassword();
+                      }
+                    }}
                   />
                 </div>
               </div>

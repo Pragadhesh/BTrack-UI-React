@@ -106,6 +106,11 @@ export default function Login(props: any) {
               size="small"
               className="flex w-72 text-sm"
               onChange={(event) => setPassword(event.target.value)}
+              onKeyPress={(event) => {
+                if (event.key === "Enter") {
+                  authenticate();
+                }
+              }}
             />
           </div>
         </div>

@@ -1,10 +1,12 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import InfoIcon from "@mui/icons-material/Info";
 import CircularProgress from "@mui/material/CircularProgress";
 import TextField from "@mui/material/TextField";
 import { CognitoUserAttribute } from "amazon-cognito-identity-js";
 import { useState } from "react";
 import Userpool from "../Userpool";
+import { Tooltip } from "@mui/material";
 
 export default function Signup(props: any) {
   const [username, setUsername] = useState(props.username);
@@ -14,7 +16,7 @@ export default function Signup(props: any) {
   const [usernameerr, setUsernameError] = useState(false);
   const [emailerr, setEmailError] = useState(false);
   const [passworderr, setPasswordError] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const switchToSignin = () => {
     props.updateUserInfo(props.email, props.username, props.password, "signin");
@@ -52,7 +54,6 @@ export default function Signup(props: any) {
           }
           setLoading(false);
         } else {
-          console.log(data);
           setEmailError(false);
           setPasswordError(false);
           setUsernameError(false);
@@ -114,8 +115,19 @@ export default function Signup(props: any) {
             )}
           </div>
           <div className="flex flex-col w-full">
-            <div className="flex justify-start text-sm text-gray-400 font-comfortaa">
-              Password
+            <div className="flex justify-between w-full ">
+              <div className="flex justify-start text-sm text-gray-400 font-comfortaa">
+                Password
+              </div>
+              <Tooltip
+                title="The password must meet the following requirements: 
+                        1. Contains at least 1 number 
+                        2. Contains at least 1 special character 
+                        3. Contains at least 1 uppercase letter 
+                        4. Contains at least 1 lowercase letter"
+              >
+                <InfoIcon></InfoIcon>
+              </Tooltip>
             </div>
             <div className="flex pt-2 justify-start w-full">
               <TextField
