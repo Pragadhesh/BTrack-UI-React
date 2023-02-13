@@ -6,7 +6,7 @@ import { useAsyncError, useNavigate } from "react-router-dom";
 import Routine from "./Shared/Routine";
 import AddProduct from "./Shared/AddProducts";
 import { BACKEND_URL } from "../../constants/backendurl";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { Products } from "../../interfaces/Products";
 
 const modalstyle = {
@@ -69,11 +69,31 @@ function Skincare() {
           },
         });
         setSkinCareItems(response.data);
-      } catch (err) {
-        console.log(err);
+      } catch (err: any) {
+        if (err.response.status === 401) {
+          console.log("entered this method for refresh");
+          const refreshResponse = await axios.post(
+            `${BACKEND_URL}user/refresh`,
+            null,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+              },
+            }
+          );
+          console.log(refreshResponse);
+          localStorage.setItem("idToken", refreshResponse.data.idToken);
+          localStorage.setItem(
+            "refreshToken",
+            refreshResponse.data.refreshToken
+          );
+          localStorage.setItem("accessToken", refreshResponse.data.accessToken);
+          fetchData();
+        } else {
+          console.log(err);
+        }
       }
     };
-
     fetchData();
   }, [skincareitems]);
 
