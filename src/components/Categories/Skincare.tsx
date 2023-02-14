@@ -44,7 +44,11 @@ function Skincare() {
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setDelSuccess(false);
+    setUpSuccess(false);
+    setOpen(false);
+  };
 
   const navigate = useNavigate();
 
@@ -52,13 +56,22 @@ function Skincare() {
   const handleaddItemOpen = () => setAddItemOpen(true);
   const handleaddItemClose = () => setAddItemOpen(false);
 
+  const [delsuccess, setDelSuccess] = useState(false);
+
+  const [upsuccess, setUpSuccess] = useState(false);
+  const [upid, setUpId] = useState(0);
   const [upisLoading, setUpIsLoading] = useState(false);
   const [upname, setUpname] = useState("");
   const [updescription, setUpdescription] = useState("");
   const [upbgimage, setUpbgimage] = useState("");
-  const [uphealth, setuphealth] = useState("");
+  const [uphealth, setuphealth] = useState(0);
   const [upcategory, setUpCategory] = useState("");
-  const [updays, setUpDays] = useState("");
+  const [uporgcategory, setUpOrgCategory] = useState("");
+  const [updays, setUpDays] = useState(0);
+
+  const [prehealth, setprehealth] = useState(0);
+  const [precategory, setpreCategory] = useState("");
+  const [predays, setpreDays] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -97,8 +110,95 @@ function Skincare() {
     fetchData();
   }, [skincareitems]);
 
-  const update = () => {
-    console.log("Item updated successfully");
+  const update = async () => {
+    setUpIsLoading(true);
+    if (
+      upcategory !== precategory ||
+      uphealth !== prehealth ||
+      updays !== predays
+    ) {
+      try {
+        for (const item of skincareitems) {
+          if (item.category === uporgcategory) {
+            for (const product of item.products) {
+              if (product.id === upid) {
+                const response = await axios.put(
+                  `${BACKEND_URL}product`,
+                  {
+                    id: upid,
+                    module: product.module,
+                    category: product.category,
+                    name: product.name,
+                    description: product.description,
+                    image_url: product.image_url,
+                    damage: product.damage,
+                    usage: upcategory,
+                    days: updays,
+                    health: uphealth,
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${localStorage.getItem(
+                        "idToken"
+                      )}`,
+                    },
+                  }
+                );
+                if (response.status === 200) {
+                  // Update the product in skincareitems
+                  for (const item of skincareitems) {
+                    if (item.category === upcategory) {
+                      for (const product of item.products) {
+                        if (product.id === upid) {
+                          product.health = uphealth;
+                          product.days = updays;
+                          break;
+                        }
+                      }
+                    }
+                  }
+                  setUpSuccess(true);
+                }
+                break;
+              }
+            }
+          }
+        }
+      } catch (error: any) {
+        if (error.response.status === 401) {
+          // Call the method to get the refreshed token
+          console.log("entered this method for refresh");
+          const response = await axios.post(
+            `${BACKEND_URL}user/refresh`,
+            null,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+              },
+            }
+          );
+          localStorage.setItem("idToken", response.data.idToken);
+          localStorage.setItem("refreshToken", response.data.refreshToken);
+          localStorage.setItem("accessToken", response.data.accessToken);
+
+          if (response.status === 200) {
+            // Update the product in skincareitems
+            for (const item of skincareitems) {
+              if (item.category === upcategory) {
+                for (const product of item.products) {
+                  if (product.id === upid) {
+                    product.health = uphealth;
+                    product.days = updays;
+                    break;
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    setUpIsLoading(false);
   };
 
   const setUpdatedCategories = (category: any, health: any, days: any) => {
@@ -113,14 +213,21 @@ function Skincare() {
     bgimage: any,
     health: any,
     upcategory: any,
-    updays: any
+    updays: any,
+    upid: any,
+    orgcat: any
   ) {
+    setUpId(upid);
     setUpname(name);
     setUpdescription(description);
     setUpbgimage(bgimage);
     setuphealth(health);
     setUpCategory(upcategory);
     setUpDays(updays);
+    setprehealth(health);
+    setpreDays(updays);
+    setpreCategory(upcategory);
+    setUpOrgCategory(orgcat);
     handleOpen();
   }
 
@@ -220,45 +327,75 @@ function Skincare() {
 
           <Modal open={open} onClose={handleClose}>
             <Box sx={modalstyle}>
-              <div className="flex flex-col w-full justify-between">
-                <div className="grid grid-cols-2 w-full">
-                  <div className="flex flex-col w-52">
-                    <div
-                      className="flex justify-end bg-red-500 w-full h-72 rounded product"
-                      style={{
-                        backgroundImage: `url(${upbgimage})`,
-                      }}
-                    >
-                      <div className="relative top-0 right-0 pt-0 pr-2"></div>
+              <div className="flex flex-col w-full h-full">
+                {!upsuccess && !delsuccess && (
+                  <>
+                    <div className="flex flex-col w-full justify-between">
+                      <div className="grid grid-cols-2 w-full">
+                        <div className="flex flex-col w-52">
+                          <div
+                            className="flex justify-end bg-red-500 w-full h-72 rounded product"
+                            style={{
+                              backgroundImage: `url(${upbgimage})`,
+                            }}
+                          >
+                            <div className="relative top-0 right-0 pt-0 pr-2"></div>
+                          </div>
+                          <div className="flex justify-start font-optimaroman font-normal text-lg pt-2">
+                            {upname}
+                          </div>
+                          <div className="flex justify-start font-optimaroman font-light text-sm pt-2 text-zinc-400">
+                            {updescription}
+                          </div>
+                        </div>
+                        <div className="flex flex-col w-full ">
+                          <Routine
+                            setUpdatedCategories={setUpdatedCategories}
+                            category={upcategory}
+                            health={uphealth}
+                            days={updays}
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex justify-start font-optimaroman font-normal text-lg pt-2">
-                      {upname}
+                    <div className="grid grid-flow-col gap-2 justify-end">
+                      <Button variant="outlined" color="error">
+                        Delete Item
+                      </Button>
+                      <Button variant="contained" onClick={update}>
+                        Save
+                      </Button>
+                      {upisLoading && (
+                        <Box sx={{ display: "flex" }}>
+                          <CircularProgress />
+                        </Box>
+                      )}
                     </div>
-                    <div className="flex justify-start font-optimaroman font-light text-sm pt-2 text-zinc-400">
-                      {updescription}
+                  </>
+                )}
+                {upsuccess && (
+                  <div className="flex flex-col w-full h-full">
+                    <div className="flex w-full h-full items-center text-4xl text-sky-500 font-dancingscript justify-center">
+                      Item Updated Successfully
+                    </div>
+                    <div className="grid grid-flow-col gap-2 justify-end">
+                      <Button variant="outlined" onClick={handleClose}>
+                        Close
+                      </Button>
                     </div>
                   </div>
-                  <div className="flex flex-col w-full ">
-                    <Routine
-                      setUpdatedCategories={setUpdatedCategories}
-                      category={upcategory}
-                      health={uphealth}
-                      days={updays}
-                    />
+                )}
+                {delsuccess && (
+                  <div className="flex flex-col w-full h-full">
+                    <div className="flex w-full h-full items-center text-4xl text-red-500 font-dancingscript justify-center">
+                      Item Deleted Successfully
+                    </div>
+                    <div className="grid grid-flow-col gap-2 justify-end">
+                      <Button variant="outlined" onClick={handleClose}>
+                        Close
+                      </Button>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div className="grid grid-flow-col gap-2 justify-end">
-                <Button variant="outlined" color="error">
-                  Delete Item
-                </Button>
-                <Button variant="contained" onClick={update}>
-                  Save
-                </Button>
-                {upisLoading && (
-                  <Box sx={{ display: "flex" }}>
-                    <CircularProgress />
-                  </Box>
                 )}
               </div>
             </Box>
@@ -301,7 +438,9 @@ function Skincare() {
                                     item.image_url,
                                     item.health,
                                     item.usage,
-                                    item.days
+                                    item.days,
+                                    item.id,
+                                    item.category
                                   )
                                 }
                               >
