@@ -110,6 +110,68 @@ function Skincare() {
     fetchData();
   }, [skincareitems]);
 
+  const deleteProduct = async () => {
+    setUpIsLoading(true);
+    try {
+      for (const item of skincareitems) {
+        if (item.category === uporgcategory) {
+          for (const product of item.products) {
+            if (product.id === upid) {
+              const response = await axios.delete(`${BACKEND_URL}product`, {
+                data: {
+                  id: upid,
+                  module: product.module,
+                  category: product.category,
+                  name: product.name,
+                  description: product.description,
+                  image_url: product.image_url,
+                  damage: product.damage,
+                  usage: upcategory,
+                  days: updays,
+                  health: uphealth,
+                },
+                headers: {
+                  Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+                },
+              });
+
+              if (response.status === 200) {
+                // Update the product in skincareitems
+                for (const item of skincareitems) {
+                  if (item.category === upcategory) {
+                    for (let i = 0; i < item.products.length; i++) {
+                      if (item.products[i].id === upid) {
+                        item.products.splice(i, 1); // remove the product from the array
+                        break;
+                      }
+                    }
+                  }
+                }
+                setDelSuccess(true);
+              }
+              break;
+            }
+          }
+        }
+      }
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        // Call the method to get the refreshed token
+        console.log("entered this method for refresh");
+        const response = await axios.post(`${BACKEND_URL}user/refresh`, null, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+          },
+        });
+        localStorage.setItem("idToken", response.data.idToken);
+        localStorage.setItem("refreshToken", response.data.refreshToken);
+        localStorage.setItem("accessToken", response.data.accessToken);
+        deleteProduct();
+      }
+    }
+    setUpIsLoading(false);
+  };
+
   const update = async () => {
     setUpIsLoading(true);
     if (
@@ -180,21 +242,7 @@ function Skincare() {
           localStorage.setItem("idToken", response.data.idToken);
           localStorage.setItem("refreshToken", response.data.refreshToken);
           localStorage.setItem("accessToken", response.data.accessToken);
-
-          if (response.status === 200) {
-            // Update the product in skincareitems
-            for (const item of skincareitems) {
-              if (item.category === upcategory) {
-                for (const product of item.products) {
-                  if (product.id === upid) {
-                    product.health = uphealth;
-                    product.days = updays;
-                    break;
-                  }
-                }
-              }
-            }
-          }
+          update();
         }
       }
     }
@@ -359,7 +407,11 @@ function Skincare() {
                       </div>
                     </div>
                     <div className="grid grid-flow-col gap-2 justify-end">
-                      <Button variant="outlined" color="error">
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        onClick={deleteProduct}
+                      >
                         Delete Item
                       </Button>
                       <Button variant="contained" onClick={update}>
