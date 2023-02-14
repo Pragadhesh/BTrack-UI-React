@@ -75,6 +75,7 @@ function Skincare() {
 
   useEffect(() => {
     const fetchData = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(`${BACKEND_URL}product/skincare`, {
           headers: {
@@ -82,6 +83,8 @@ function Skincare() {
           },
         });
         setSkinCareItems(response.data);
+        console.log(response.data);
+        setIsLoading(false);
       } catch (err: any) {
         if (err.response.status === 401) {
           console.log("entered this method for refresh");
@@ -104,11 +107,12 @@ function Skincare() {
           fetchData();
         } else {
           console.log(err);
+          setIsLoading(false);
         }
       }
     };
     fetchData();
-  }, [skincareitems]);
+  }, []);
 
   const deleteProduct = async () => {
     setUpIsLoading(true);

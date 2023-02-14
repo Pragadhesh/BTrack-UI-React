@@ -1,9 +1,12 @@
 import { Box, Button, CircularProgress, Modal } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "../Shared.css";
 import Routine from "./Routine";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
+import { BACKEND_URL } from "../../../constants/backendurl";
+import ProductList from "../../../interfaces/AddProducts";
 
 const modalstyle = {
   position: "absolute" as "absolute",
@@ -20,6 +23,8 @@ const modalstyle = {
 };
 
 function AddProduct(props: any) {
+  const [products, setProducts] = useState<ProductList>([]);
+
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -37,6 +42,48 @@ function AddProduct(props: any) {
   const [uphealth, setuphealth] = useState("");
   const [upcategory, setUpCategory] = useState("");
   const [updays, setUpDays] = useState("");
+
+  useEffect(() => {
+    setIsLoading(true);
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `${BACKEND_URL}addproduct/${module}/${category}`,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+            },
+          }
+        );
+        setProducts(response.data);
+        setIsLoading(false);
+      } catch (err: any) {
+        if (err.response.status === 401) {
+          console.log("entered this method for refresh");
+          const refreshResponse = await axios.post(
+            `${BACKEND_URL}user/refresh`,
+            null,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+              },
+            }
+          );
+          localStorage.setItem("idToken", refreshResponse.data.idToken);
+          localStorage.setItem(
+            "refreshToken",
+            refreshResponse.data.refreshToken
+          );
+          localStorage.setItem("accessToken", refreshResponse.data.accessToken);
+          fetchData();
+        } else {
+          console.log(err);
+          setIsLoading(false);
+        }
+      }
+    };
+    fetchData();
+  }, []);
 
   function openModalforUpdate(
     name: any,
@@ -70,7 +117,10 @@ function AddProduct(props: any) {
       )}
       {!isLoading && (
         <div className="flex flex-col w-full h-full pr-10 pl-10">
-          <div className="flex w-full pt-5 justify-end">
+          <div className="flex w-full pt-5 justify-between">
+            <div className="flex font-playfair text-xl font-bold text-sky-700">
+              Add Products
+            </div>
             <Link to={"/btrack/" + module}>
               <Button variant="outlined">Back</Button>
             </Link>
@@ -118,41 +168,56 @@ function AddProduct(props: any) {
             </Box>
           </Modal>
           <div className="flex flex-col w-full h-full">
-            <div className="flex justify-start font-playfair text-3xl font-bold text-sky-700">
-              Serum
+            <div className="flex w-full justify-start items-center font-dancingscript text-4xl font-bold text-sky-500">
+              {category.charAt(0).toUpperCase() + category.slice(1)}
             </div>
             <div className="grid w-full h-full grid-flow-row grid-cols-3 pt-5 gap-3 gap-y-7">
-              <div className="flex flex-col w-52">
-                <div
-                  className="flex justify-end bg-red-500 w-full h-72 rounded product"
-                  style={{
-                    backgroundImage: `url("https://www.esteelauder.in/media/export/cms/products/308x424/el_sku_PMG501_308x424_0.jpg")`,
-                  }}
-                ></div>
-                <div className="flex justify-start font-optimaroman font-normal text-lg pt-2">
-                  Advanced Night Repair
-                </div>
-                <div className="flex justify-start font-optimaroman font-light text-sm pt-2 text-zinc-400">
-                  Synchronized Multi-Recovery Complex will cause this issue
-                </div>
-                <div className="flex w-full pt-2">
-                  <Button
-                    variant="outlined"
-                    className="w-full"
-                    onClick={() =>
-                      openModalforUpdate(
-                        "Advanced Night Repair",
-                        "Synchronized Multi-Recovery Complex will cause this issue",
-                        "https://www.esteelauder.in/media/export/cms/products/308x424/el_sku_PMG501_308x424_0.jpg",
-                        100,
-                        "daily"
-                      )
-                    }
+              {products.map((product, index) => (
+                <div className="flex flex-col w-52" key={index}>
+                  <div
+                    className="flex justify-end bg-red-500 w-full h-72 rounded product"
+                    style={{
+                      backgroundImage: `url("${product.image_url}")`,
+                    }}
+                  ></div>
+                  <div
+                    className="flex justify-start font-optimaroman font-normal text-lg pt-2 h-10"
+                    style={{
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                    title={product.name}
                   >
-                    Add Item
-                  </Button>
+                    {product.name}
+                  </div>
+                  <div className="flex justify-start font-optimaroman font-light text-sm h-12 items-center pt-2 text-zinc-400">
+                    <div
+                      className="text-overflow-ellipsis"
+                      title={product.description}
+                    >
+                      {product.description}
+                    </div>
+                  </div>
+                  <div className="flex w-full pt-2">
+                    <Button
+                      variant="outlined"
+                      className="w-full"
+                      onClick={() =>
+                        openModalforUpdate(
+                          product.name,
+                          product.description,
+                          product.image_url,
+                          product.damage,
+                          "daily"
+                        )
+                      }
+                    >
+                      Add Item
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
