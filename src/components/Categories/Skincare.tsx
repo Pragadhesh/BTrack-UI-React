@@ -39,9 +39,7 @@ const categorystyle = {
 
 function Skincare() {
   const [skincareitems, setSkinCareItems] = useState<Products>([]);
-
   const [isLoading, setIsLoading] = useState(false);
-
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -83,7 +81,6 @@ function Skincare() {
           },
         });
         setSkinCareItems(response.data);
-        console.log(response.data);
         setIsLoading(false);
       } catch (err: any) {
         if (err.response.status === 401) {
@@ -97,7 +94,6 @@ function Skincare() {
               },
             }
           );
-          console.log(refreshResponse);
           localStorage.setItem("idToken", refreshResponse.data.idToken);
           localStorage.setItem(
             "refreshToken",
@@ -141,16 +137,26 @@ function Skincare() {
 
               if (response.status === 200) {
                 // Update the product in skincareitems
-                for (const item of skincareitems) {
-                  if (item.category === upcategory) {
+                const updatedSkincareItems = [...skincareitems];
+                for (const item of updatedSkincareItems) {
+                  if (item.category === uporgcategory) {
                     for (let i = 0; i < item.products.length; i++) {
                       if (item.products[i].id === upid) {
                         item.products.splice(i, 1); // remove the product from the array
+                        if (item.products.length === 0) {
+                          // if there are no products in the category, remove the category
+                          const index = updatedSkincareItems.findIndex(
+                            (category) => category.category === uporgcategory
+                          );
+                          updatedSkincareItems.splice(index, 1);
+                        }
                         break;
                       }
                     }
                   }
                 }
+
+                setSkinCareItems(updatedSkincareItems);
                 setDelSuccess(true);
               }
               break;
@@ -211,18 +217,21 @@ function Skincare() {
                   }
                 );
                 if (response.status === 200) {
-                  // Update the product in skincareitems
-                  for (const item of skincareitems) {
-                    if (item.category === upcategory) {
+                  const updatedSkincareItems = [...skincareitems];
+                  for (const item of updatedSkincareItems) {
+                    if (item.category === uporgcategory) {
                       for (const product of item.products) {
                         if (product.id === upid) {
                           product.health = uphealth;
                           product.days = updays;
+                          product.usage = upcategory;
                           break;
                         }
                       }
                     }
                   }
+                  console.log(updatedSkincareItems);
+                  setSkinCareItems(updatedSkincareItems);
                   setUpSuccess(true);
                 }
                 break;
@@ -269,6 +278,7 @@ function Skincare() {
     upid: any,
     orgcat: any
   ) {
+    console.log(upcategory + "  " + updays + "  " + uphealth);
     setUpId(upid);
     setUpname(name);
     setUpdescription(description);
@@ -457,7 +467,10 @@ function Skincare() {
             </Box>
           </Modal>
 
-          <div className="flex justify-end pt-5 ">
+          <div className="flex w-full pt-5 justify-between">
+            <div className="flex font-playfair text-xl font-bold text-sky-700">
+              My Skincare Products
+            </div>
             <Button variant="outlined" onClick={handleaddItemOpen}>
               Add Skincare Item
             </Button>
@@ -471,7 +484,7 @@ function Skincare() {
             skincareitems.map((category) => {
               return (
                 <div className="flex flex-col w-full pt-5">
-                  <div className="flex justify-start font-playfair text-3xl font-bold text-sky-700">
+                  <div className="flex justify-start font-dancingscript text-3xl font-bold text-sky-500">
                     {category.category.charAt(0).toUpperCase() +
                       category.category.slice(1)}
                   </div>

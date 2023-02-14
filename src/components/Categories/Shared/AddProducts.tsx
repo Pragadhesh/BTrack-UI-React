@@ -33,15 +33,19 @@ function AddProduct(props: any) {
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setAddSuccess(false);
+    setOpen(false);
+  };
 
+  const [addsuccess, setAddSuccess] = useState(false);
   const [upisLoading, setUpIsLoading] = useState(false);
   const [upname, setUpname] = useState("");
   const [updescription, setUpdescription] = useState("");
   const [upbgimage, setUpbgimage] = useState("");
-  const [uphealth, setuphealth] = useState("");
+  const [uphealth, setuphealth] = useState();
   const [upcategory, setUpCategory] = useState("");
-  const [updays, setUpDays] = useState("");
+  const [updays, setUpDays] = useState();
 
   useEffect(() => {
     setIsLoading(true);
@@ -85,18 +89,10 @@ function AddProduct(props: any) {
     fetchData();
   }, []);
 
-  function openModalforUpdate(
-    name: any,
-    description: any,
-    bgimage: any,
-    health: any,
-    category: any
-  ) {
+  function openModalforUpdate(name: any, description: any, bgimage: any) {
     setUpname(name);
     setUpdescription(description);
     setUpbgimage(bgimage);
-    setuphealth(health);
-    setUpCategory(category);
     handleOpen();
   }
 
@@ -104,6 +100,48 @@ function AddProduct(props: any) {
     setUpCategory(category);
     setuphealth(health);
     setUpDays(days);
+  };
+
+  const addproduct = async () => {
+    setUpIsLoading(true);
+    try {
+      const response = await axios.post(
+        `${BACKEND_URL}product`,
+        {
+          module: module,
+          category: category,
+          name: upname,
+          description: updescription,
+          image_url: upbgimage,
+          usage: upcategory,
+          days: updays,
+          health: uphealth,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+          },
+        }
+      );
+      if (response.status === 200) {
+        setAddSuccess(true);
+      }
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        // Call the method to get the refreshed token
+        console.log("entered this method for refresh");
+        const response = await axios.post(`${BACKEND_URL}user/refresh`, null, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+          },
+        });
+        localStorage.setItem("idToken", response.data.idToken);
+        localStorage.setItem("refreshToken", response.data.refreshToken);
+        localStorage.setItem("accessToken", response.data.accessToken);
+        addproduct();
+      }
+    }
+    setUpIsLoading(false);
   };
 
   return (
@@ -127,44 +165,62 @@ function AddProduct(props: any) {
           </div>
           <Modal open={open} onClose={handleClose}>
             <Box sx={modalstyle}>
-              <div className="flex flex-col w-full justify-between">
-                <div className="grid grid-cols-2 w-full">
-                  <div className="flex flex-col w-52">
-                    <div
-                      className="flex justify-end bg-red-500 w-full h-72 rounded product"
-                      style={{
-                        backgroundImage: `url(${upbgimage})`,
-                      }}
-                    >
-                      <div className="relative top-0 right-0 pt-0 pr-2"></div>
-                    </div>
-                    <div className="flex justify-start font-optimaroman font-normal text-lg pt-2">
-                      {upname}
-                    </div>
-                    <div className="flex justify-start font-optimaroman font-light text-sm pt-2 text-zinc-400">
-                      {updescription}
+              {!addsuccess && (
+                <>
+                  <div className="flex flex-col w-full justify-between">
+                    <div className="grid grid-cols-2 w-full">
+                      <div className="flex flex-col w-52">
+                        <div
+                          className="flex justify-end bg-red-500 w-full h-72 rounded product"
+                          style={{
+                            backgroundImage: `url(${upbgimage})`,
+                          }}
+                        >
+                          <div className="relative top-0 right-0 pt-0 pr-2"></div>
+                        </div>
+                        <div className="flex justify-start font-optimaroman font-normal text-lg pt-2">
+                          {upname}
+                        </div>
+                        <div className="flex justify-start font-optimaroman font-light text-sm pt-2 text-zinc-400">
+                          {updescription}
+                        </div>
+                      </div>
+                      <div className="flex flex-col w-full ">
+                        <Routine
+                          setUpdatedCategories={setUpdatedCategories}
+                          category={"daily"}
+                          health={100}
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div className="flex flex-col w-full ">
-                    <Routine
-                      setUpdatedCategories={setUpdatedCategories}
-                      category={upcategory}
-                      health={uphealth}
-                    />
+                  <div className="grid grid-flow-col gap-2 justify-end">
+                    <Button variant="outlined" onClick={handleClose}>
+                      Cancel
+                    </Button>
+                    <Button variant="contained" onClick={addproduct}>
+                      Save
+                    </Button>
+                    {upisLoading && (
+                      <Box sx={{ display: "flex" }}>
+                        <CircularProgress />
+                      </Box>
+                    )}
+                  </div>
+                </>
+              )}
+              {addsuccess && (
+                <div className="flex flex-col w-full h-full">
+                  <div className="flex w-full h-full items-center text-4xl text-sky-500 font-dancingscript justify-center">
+                    Item Added Successfully
+                  </div>
+                  <div className="grid grid-flow-col gap-2 justify-end">
+                    <Button variant="outlined" onClick={handleClose}>
+                      Close
+                    </Button>
                   </div>
                 </div>
-              </div>
-              <div className="grid grid-flow-col gap-2 justify-end">
-                <Button variant="outlined" onClick={handleClose}>
-                  Cancel
-                </Button>
-                <Button variant="contained">Save</Button>
-                {upisLoading && (
-                  <Box sx={{ display: "flex" }}>
-                    <CircularProgress />
-                  </Box>
-                )}
-              </div>
+              )}
             </Box>
           </Modal>
           <div className="flex flex-col w-full h-full">
@@ -207,9 +263,7 @@ function AddProduct(props: any) {
                         openModalforUpdate(
                           product.name,
                           product.description,
-                          product.image_url,
-                          product.damage,
-                          "daily"
+                          product.image_url
                         )
                       }
                     >
