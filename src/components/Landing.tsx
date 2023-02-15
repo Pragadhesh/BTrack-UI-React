@@ -1,6 +1,7 @@
 import { Modal, Box, Button } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
+import jwtDecode from "jwt-decode";
 import "./Landing.css";
 
 const modalstyle = {
@@ -21,6 +22,20 @@ function Landing(props: any) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const idToken = localStorage.getItem("idToken");
+    if (idToken) {
+      const decoded: { [key: string]: any } = jwtDecode(idToken);
+      const usernameClaim = decoded["cognito:username"];
+      if (usernameClaim) {
+        const usernameValue = usernameClaim as string;
+        setUsername(usernameValue);
+      }
+    }
+  }, []);
 
   const navigate = useNavigate();
 
@@ -46,7 +61,7 @@ function Landing(props: any) {
           B Track
         </div>
         <div className="flex w-full pt-5 justify-end text-3xl font-dancingscript text-sky-600 font-bold">
-          Pragadhesh
+          {username.charAt(0).toUpperCase() + username.slice(1)}
         </div>
       </div>
       <div className="flex w-full h-full">

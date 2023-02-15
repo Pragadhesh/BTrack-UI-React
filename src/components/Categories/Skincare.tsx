@@ -306,9 +306,9 @@ function Skincare() {
 
   function getHealthColor(health: any) {
     let healthColor = "";
-    if (health >= 0 && health < 20) {
+    if (health >= 0 && health <= 20) {
       return "bg-red-500";
-    } else if (health >= 20 && health < 40) {
+    } else if (health > 20 && health < 40) {
       return "bg-orange-500";
     } else if (health >= 40 && health < 60) {
       return "bg-yellow-500";
