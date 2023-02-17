@@ -1,4 +1,4 @@
-import { Modal, Box, Button } from "@mui/material";
+import { Modal, Box, Button, Divider } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
 import jwtDecode from "jwt-decode";
@@ -120,6 +120,17 @@ function Landing(props: any) {
             >
               Fragrance
             </button>
+            <Divider />
+            <button
+              onClick={() => handleButtonClick("routine")}
+              className={
+                activeButton === "routine"
+                  ? "flex h-10 font-dancingscript text-xl font-medium items-center pl-5 activebutton"
+                  : "flex h-10 font-dancingscript text-xl font-medium items-center pl-5 inactivebutton"
+              }
+            >
+              Routine
+            </button>
 
             <button
               onClick={() => handleButtonClick("notes")}
@@ -131,7 +142,7 @@ function Landing(props: any) {
             >
               Shopping Notes
             </button>
-
+            <Divider />
             <button
               onClick={() => handleButtonClick("assist")}
               className={
@@ -153,7 +164,7 @@ function Landing(props: any) {
             >
               Alerts
             </button>
-
+            <Divider />
             <button
               className="flex w-full pt-10 pl-5 font-dancingscript text-3xl text-sky-500"
               onClick={handleOpen}

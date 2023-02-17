@@ -15,6 +15,7 @@ import Requests from "./components/Categories/Assistance/Requests";
 import Manage from "./components/Categories/Assistance/Manage";
 import Details from "./components/Categories/Assistance/Details";
 import AddAssistant from "./components/Categories/Assistance/AddAssistant";
+import Dailyroutine from "./components/Categories/Dailyroutine";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -56,6 +57,7 @@ function App() {
             ></Route>
             <Route path="makeup" element={<Makeup />} />
             <Route path="fragrance" element={<Fragrance />} />
+            <Route path="routine" element={<Dailyroutine />} />
             <Route path="notes" element={<Notes />} />
             <Route path="alerts" element={<Alerts />} />
             <Route path="assist" element={<Assist />}>
