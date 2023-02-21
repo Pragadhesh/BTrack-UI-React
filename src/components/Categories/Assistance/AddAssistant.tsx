@@ -41,8 +41,18 @@ function AddAssistant() {
 
   return (
     <div className="flex flex-col w-full h-full">
+      <div className="flex w-full p-5 justify-between">
+        <div className="flex font-playfair text-xl font-bold text-sky-700">
+          Add Assistant
+        </div>
+        <div className="flex  pt-5 justify-end items-center">
+          <Link to={"/btrack/assist/"}>
+            <Button variant="outlined">Back</Button>
+          </Link>
+        </div>
+      </div>
       <div className="grid grid-cols-4 pl-10 pr-10">
-        <div className="grid grid-flow-col gap-1 justify-center p-3 items-center col-span-3">
+        <div className="grid grid-flow-col gap-1 justify-center  items-center col-span-3">
           <TextField
             id="search"
             label="Username"
@@ -54,11 +64,6 @@ function AddAssistant() {
           <Button variant="outlined" color="primary" className="flex pl-5">
             Search
           </Button>
-        </div>
-        <div className="flex  pt-5 justify-end items-center">
-          <Link to={"/btrack/assist/"}>
-            <Button variant="outlined">Back</Button>
-          </Link>
         </div>
       </div>
       {isLoading && (
@@ -105,9 +110,6 @@ function AddAssistant() {
           )}
           {assistants.length != 0 && (
             <div className="flex flex-col w-full h-full pl-10 pr-10">
-              <div className="flex justify-start font-playfair text-xl font-bold text-sky-700 pt-10">
-                Users
-              </div>
               <div className="grid grid-flow-row pt-10 pl-10 gap-5">
                 <Card className="flex w-3/5 h-24 self-center">
                   <div className="grid grid-cols-2 w-full h-full">

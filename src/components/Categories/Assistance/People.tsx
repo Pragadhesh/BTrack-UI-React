@@ -1,26 +1,65 @@
 import { Box, Button, Card, CircularProgress, Modal } from "@mui/material";
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BACKEND_URL } from "../../../constants/backendurl";
+import PeopleList from "../../../interfaces/People";
 
 function People() {
   const [isLoading, setIsLoading] = useState(false);
 
-  const assistants = [
-    {
-      name: "pragadhesh",
-    },
-  ];
+  const [peoplelist, setPeopleList] = useState<PeopleList>([]);
+
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(`${BACKEND_URL}assistants/people`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+          },
+        });
+        setPeopleList(response.data);
+        setIsLoading(false);
+      } catch (err: any) {
+        if (err.response.status === 401) {
+          console.log("entered this method for refresh");
+          const refreshResponse = await axios.post(
+            `${BACKEND_URL}user/refresh`,
+            null,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+              },
+            }
+          );
+          localStorage.setItem("idToken", refreshResponse.data.idToken);
+          localStorage.setItem(
+            "refreshToken",
+            refreshResponse.data.refreshToken
+          );
+          localStorage.setItem("accessToken", refreshResponse.data.accessToken);
+          fetchData();
+        } else {
+          console.log(err);
+          setIsLoading(false);
+        }
+      }
+    };
+    fetchData();
+  }, []);
 
   function openViewDetails(name: any) {
     const path = "/btrack/assist/people/" + name;
-    console.log(path);
     navigate(path, {
       state: {
         username: name,
       },
     });
   }
+
   return (
     <div className="flex w-full h-full">
       {isLoading && (
@@ -32,33 +71,35 @@ function People() {
       )}
       {!isLoading && (
         <div className="flex flex-col w-full h-full pr-10 pl-10">
-          {assistants.length == 0 && (
+          {peoplelist.length == 0 && (
             <div className="flex w-full h-full text-4xl text-sky-500 font-dancingscript justify-center items-center">
               No People found
             </div>
           )}
-          {assistants.length != 0 && (
+          {peoplelist.length != 0 && (
             <div className="flex flex-col w-full h-full">
               <div className="flex justify-start font-playfair text-xl font-bold text-sky-700 pt-10">
                 People
               </div>
               <div className="grid grid-flow-row pt-10 pl-10 gap-5">
-                <Card className="flex w-4/6 h-24 self-center">
-                  <div className="grid grid-cols-2 w-full h-full">
-                    <div className="flex items-center w-full h-full font-dancingscript p-5 text-3xl text-sky-400">
-                      Pragadhesh
+                {peoplelist.map((people, index) => (
+                  <Card className="flex w-4/6 h-24 self-center" key={index}>
+                    <div className="grid grid-cols-2 w-full h-full">
+                      <div className="flex items-center w-full h-full font-dancingscript p-5 text-3xl text-sky-400">
+                        {people.user.username}
+                      </div>
+                      <div className="grid grid-flow-col gap-2 w-full h-full justify-end items-center p-5">
+                        <Button
+                          variant="outlined"
+                          className=" h-10"
+                          onClick={() => openViewDetails(people.user.username)}
+                        >
+                          View Details
+                        </Button>
+                      </div>
                     </div>
-                    <div className="grid grid-flow-col gap-2 w-full h-full justify-end items-center p-5">
-                      <Button
-                        variant="outlined"
-                        className=" h-10"
-                        onClick={() => openViewDetails("Ramesh")}
-                      >
-                        View Details
-                      </Button>
-                    </div>
-                  </div>
-                </Card>
+                  </Card>
+                ))}
               </div>
             </div>
           )}
