@@ -147,8 +147,8 @@ function Landing(props: any) {
               onClick={() => handleButtonClick("assist")}
               className={
                 activeButton === "assist"
-                  ? "flex h-10 font-comfortaa text-lg font-medium items-center pl-5 text-sky-500 activeassist"
-                  : "flex h-10 font-comfortaa text-lg font-medium items-center pl-5 text-sky-500 inactiveassist"
+                  ? "flex h-10 font-playfair text-lg font-medium items-center pl-5 text-sky-500 activeassist"
+                  : "flex h-10 font-playfair text-lg font-medium items-center pl-5 text-sky-500 inactiveassist"
               }
             >
               Assist
@@ -158,8 +158,8 @@ function Landing(props: any) {
               onClick={() => handleButtonClick("alerts")}
               className={
                 activeButton === "alerts"
-                  ? "flex h-10 font-playfair text-xl font-medium items-center pl-5 activealert"
-                  : "flex h-10 font-playfair text-xl font-medium items-center pl-5 inactivealert"
+                  ? "flex h-10 font-playfair text-lg font-medium items-center pl-5 activealert"
+                  : "flex h-10 font-playfair text-lg font-medium items-center pl-5 inactivealert"
               }
             >
               Alerts
