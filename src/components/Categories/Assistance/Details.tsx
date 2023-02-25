@@ -1,6 +1,10 @@
 import { Box, Button, Card, CircularProgress, Modal } from "@mui/material";
-import { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { BACKEND_URL } from "../../../constants/backendurl";
+import AlertList from "../../../interfaces/Alerts";
+import NotesList from "../../../interfaces/Notes";
 
 const modalstyle = {
   position: "absolute" as "absolute",
@@ -36,21 +40,62 @@ function Details() {
   const handleClose = () => setOpen(false);
 
   const [name, setName] = useState(location.state.username);
-  const details = [
-    {
-      name: "pragadhesh",
-    },
-  ];
-  const alerts = [
-    {
-      name: "demo",
-    },
-  ];
-  const notes = [
-    {
-      name: "demo",
-    },
-  ];
+  const [id, setId] = useState(location.state.id);
+  const [email, setEmail] = useState(location.state.email);
+
+  const [alerts, setAlerts] = useState<AlertList>([]);
+  const [notes, setNotes] = useState<NotesList>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.post(
+          `${BACKEND_URL}assistants/getdetails`,
+          {
+            id: id,
+            username: name,
+            email: email,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+            },
+          }
+        );
+
+        const { alerts, notes } = response.data;
+        setAlerts(alerts);
+        setNotes(notes);
+        setIsLoading(false);
+      } catch (err: any) {
+        if (err.response.status === 401) {
+          console.log("entered this method for refresh");
+          const refreshResponse = await axios.post(
+            `${BACKEND_URL}user/refresh`,
+            null,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+              },
+            }
+          );
+          localStorage.setItem("idToken", refreshResponse.data.idToken);
+          localStorage.setItem(
+            "refreshToken",
+            refreshResponse.data.refreshToken
+          );
+          localStorage.setItem("accessToken", refreshResponse.data.accessToken);
+          fetchData();
+        } else {
+          console.log(err);
+          setIsLoading(false);
+        }
+      }
+    };
+    fetchData();
+  }, []);
+
   function getHealthColor(health: any) {
     let healthColor = "";
     if (health >= 0 && health < 20) {
@@ -77,7 +122,7 @@ function Details() {
       )}
       {!isLoading && (
         <div className="flex flex-col w-full h-full pr-10 pl-10">
-          {details.length == 0 && (
+          {notes.length == 0 && alerts.length == 0 && (
             <div className="flex w-full h-full text-4xl text-sky-500 font-dancingscript justify-center items-center">
               No Information found
             </div>
@@ -90,6 +135,7 @@ function Details() {
                     placeholder="Title"
                     className="flex w-full font-semibold font-sans outline-none overflow-hidden truncate"
                     value={notestitle}
+                    readOnly
                   />
                 </div>
                 <div className="flex w-full h-full items-start pt-5">
@@ -98,6 +144,7 @@ function Details() {
                     placeholder="Take a note..."
                     className="flex w-full h-80 font-sans font-sm outline-none "
                     value={notesdesscription}
+                    readOnly
                   />
                 </div>
                 <div className="grid grid-flow-col gap-2 justify-end">
@@ -108,11 +155,11 @@ function Details() {
               </div>
             </Box>
           </Modal>
-          {details.length != 0 && (
+          {(notes.length !== 0 || alerts.length !== 0) && (
             <div className="flex flex-col w-full h-full">
               <div className="grid grid-cols-2">
                 <div className="flex justify-start items-center font-playfair text-3xl font-bold text-sky-700 pt-10">
-                  {name}
+                  {name.charAt(0).toUpperCase() + name.slice(1)}
                 </div>
                 <div className="flex w-full pt-5 justify-end items-center">
                   <Link to={"/btrack/assist/"}>
@@ -120,182 +167,93 @@ function Details() {
                   </Link>
                 </div>
               </div>
-              {notes.length != 0 && (
+
+              {alerts.length !== 0 && (
                 <div className="flex flex-col w-full h-full">
-                  <div className="flex justify-start font-playfair text-xl font-bold text-sky-500 pt-10">
-                    Shopping Notes
+                  <div className="flex justify-start font-playfair text-xl font-bold text-sky-500 pt-5">
+                    Alerts
                   </div>
-                  <div className="grid w-full grid-flow-row grid-cols-4 pt-5 gap-4 gap-y-7">
-                    <div
-                      className="flex flex-col w-64 min-h-auto max-h-96 rounded notes"
-                      onClick={() =>
-                        handleOpen(
-                          "This is the title introduced by semoin prandndm didkdkd jejekeieios",
-                          "Television is one of the many wonders of modern science and \
-                                technology.It was invented in England by the Scottish \
-                                scientist J.N. Baird in 1928 and the British Broadcasting \
-                                Corporation was the first to broadcast television images in \
-                                1929. Previously the radio helped us hear things from far and \
-                                near. spread information and knowledge from one corner of the \
-                                globe to another. But all this was done through sound only. \
-                                But television combined visual images with sound. Today we can \
-                                watch games, shows, and song and dance programs from all \
-                                corners of the world while sitting in our own homes. TV can be \
-                                used for educating the masses, for bringing to us the latest \
-                                pieces of information audio-visually and can provide us with \
-                                all kinds of entertainment even in colour. But as in all \
-                                things, too much televiewing may prove harmful. In many cases, \
-                                the habit of watching TV has an adverse effect on the study \
-                                habits of the young. When we read books, we have to use our \
-                                intelligence and imagination. But in most cases, TV watching \
-                                is a passive thing. It may dull our imagination and \
-                                intelligence",
-                          true
-                        )
-                      }
-                    >
-                      <div className="flex w-full p-2">
-                        <input
-                          readOnly
-                          placeholder="Title"
-                          className="flex w-full font-semibold font-sans outline-none overflow-hidden truncate"
-                          value="This is the title introduced by udhayanidhi stalind This is the title introduced by udhayanidhi stalind"
-                        />
+                  <div className="grid w-full h-full grid-flow-row grid-cols-3 gap-3 gap-y-7">
+                    {alerts.map((alert, index) => (
+                      <div className="flex flex-col w-52" key={index}>
+                        <div className="flex justify-start font-dancingscript text-3xl font-bold text-red-500 p-2">
+                          {alert.category.charAt(0).toUpperCase() +
+                            alert.category.slice(1)}
+                        </div>
+                        <div
+                          className="flex justify-end bg-red-500 w-full h-72 rounded product"
+                          style={{
+                            backgroundImage: `url("${alert.image_url}")`,
+                          }}
+                        ></div>
+                        <div
+                          className="flex justify-start font-optimaroman font-normal text-lg pt-2 h-10"
+                          style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap",
+                          }}
+                          title={alert.name}
+                        >
+                          {alert.name}
+                        </div>
+                        <div
+                          className="relative w-full h-3 mt-2 rounded health"
+                          title={`Health: ${alert.health}%`}
+                        >
+                          <div
+                            className={`absolute h-full left-0 top-0 rounded ${getHealthColor(
+                              alert.health
+                            )}`}
+                            style={{
+                              width: `${alert.health}%`,
+                              animation: "fill-bar 2s ease-in-out",
+                            }}
+                          ></div>
+                          <div className="absolute h-full right-0 top-0">
+                            <span className="text-white text-center absolute w-full h-full top-0 left-0">
+                              {100 - alert.health}%
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex w-full p-2 font-sans text-sm text-overflow-ellipsis overflow-hidden white-space-nowrap min-h-auto max-h-96">
-                        Television is one of the many wonders of modern science
-                        and
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               )}
 
-              {alerts.length != 0 && (
-                <div className="flex flex-col w-full h-full">
+              {notes.length !== 0 && (
+                <div className="flex flex-col w-full h-full pb-5">
                   <div className="flex justify-start font-playfair text-xl font-bold text-sky-500 pt-10">
-                    Alerts
+                    Shopping Notes
                   </div>
-                  <div className="grid w-full h-full grid-flow-row grid-cols-3 pt-5 gap-3 gap-y-7">
-                    <div className="flex flex-col w-52">
-                      <div className="flex justify-start font-dancingscript text-3xl font-bold text-red-500 p-2">
-                        Serum
-                      </div>
+                  <div className="grid w-full grid-flow-row grid-cols-4 pt-5 gap-4 gap-y-7">
+                    {notes.map((note, index) => (
                       <div
-                        className="flex justify-end bg-red-500 w-full h-72 rounded product"
-                        style={{
-                          backgroundImage: `url("https://www.esteelauder.in/media/export/cms/products/308x424/el_sku_PMG501_308x424_0.jpg")`,
-                        }}
-                      ></div>
-                      <div className="flex justify-start font-optimaroman font-normal text-lg pt-2">
-                        Advanced Night Repair
-                      </div>
-                      <div className="flex justify-start font-optimaroman font-light text-sm pt-2 text-zinc-400">
-                        Synchronized Multi-Recovery Complex will cause this
-                        issue
-                      </div>
-                      <div
-                        className="relative w-full h-3 mt-2 rounded health"
-                        title={`Health: ${30}%`}
+                        className="flex flex-col w-64 min-h-auto max-h-96 rounded notes"
+                        key={index}
+                        onClick={() =>
+                          handleOpen(note.title, note.description, true)
+                        }
                       >
-                        <div
-                          className={`absolute h-full left-0 top-0 rounded ${getHealthColor(
-                            90
-                          )}`}
-                          style={{
-                            width: `${90}%`,
-                            animation: "fill-bar 2s ease-in-out",
-                          }}
-                        ></div>
-                        <div className="absolute h-full right-0 top-0">
-                          <span className="text-white text-center absolute w-full h-full top-0 left-0">
-                            {100 - 90}%
-                          </span>
+                        <div className="flex w-full p-2">
+                          <input
+                            readOnly
+                            placeholder="Title"
+                            className="flex w-full font-semibold font-sans outline-none overflow-hidden truncate"
+                            value={note.title}
+                          />
+                        </div>
+                        <div className="flex w-full p-2 font-sans text-sm text-overflow-ellipsis overflow-hidden white-space-nowrap min-h-auto max-h-96">
+                          {note.description}
                         </div>
                       </div>
-                    </div>
-
-                    <div className="flex flex-col w-52">
-                      <div className="flex justify-start font-dancingscript text-3xl font-bold text-red-500 p-2">
-                        Serum
-                      </div>
-                      <div
-                        className="flex justify-end bg-red-500 w-full h-72 rounded product"
-                        style={{
-                          backgroundImage: `url("https://www.esteelauder.in/media/export/cms/products/308x424/el_sku_PMG501_308x424_0.jpg")`,
-                        }}
-                      ></div>
-                      <div className="flex justify-start font-optimaroman font-normal text-lg pt-2">
-                        Advanced Night Repair
-                      </div>
-                      <div className="flex justify-start font-optimaroman font-light text-sm pt-2 text-zinc-400">
-                        Synchronized Multi-Recovery Complex will cause this
-                        issue
-                      </div>
-                      <div
-                        className="relative w-full h-3 mt-2 rounded health"
-                        title={`Health: ${30}%`}
-                      >
-                        <div
-                          className={`absolute h-full left-0 top-0 rounded ${getHealthColor(
-                            90
-                          )}`}
-                          style={{
-                            width: `${90}%`,
-                            animation: "fill-bar 2s ease-in-out",
-                          }}
-                        ></div>
-                        <div className="absolute h-full right-0 top-0">
-                          <span className="text-white text-center absolute w-full h-full top-0 left-0">
-                            {100 - 90}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col w-52">
-                      <div className="flex justify-start font-dancingscript text-3xl font-bold text-red-500 p-2">
-                        Serum
-                      </div>
-                      <div
-                        className="flex justify-end bg-red-500 w-full h-72 rounded product"
-                        style={{
-                          backgroundImage: `url("https://www.esteelauder.in/media/export/cms/products/308x424/el_sku_PMG501_308x424_0.jpg")`,
-                        }}
-                      ></div>
-                      <div className="flex justify-start font-optimaroman font-normal text-lg pt-2">
-                        Advanced Night Repair
-                      </div>
-                      <div className="flex justify-start font-optimaroman font-light text-sm pt-2 text-zinc-400">
-                        Synchronized Multi-Recovery Complex will cause this
-                        issue
-                      </div>
-                      <div
-                        className="relative w-full h-3 mt-2 rounded health"
-                        title={`Health: ${30}%`}
-                      >
-                        <div
-                          className={`absolute h-full left-0 top-0 rounded ${getHealthColor(
-                            90
-                          )}`}
-                          style={{
-                            width: `${90}%`,
-                            animation: "fill-bar 2s ease-in-out",
-                          }}
-                        ></div>
-                        <div className="absolute h-full right-0 top-0">
-                          <span className="text-white text-center absolute w-full h-full top-0 left-0">
-                            {100 - 90}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
               )}
             </div>
           )}
-          <div className="flex flex-col p-5"></div>
         </div>
       )}
     </div>

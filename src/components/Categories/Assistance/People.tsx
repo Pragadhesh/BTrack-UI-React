@@ -51,11 +51,13 @@ function People() {
     fetchData();
   }, []);
 
-  function openViewDetails(name: any) {
+  function openViewDetails(id: any, name: any, email: any) {
     const path = "/btrack/assist/people/" + name;
     navigate(path, {
       state: {
+        id: id,
         username: name,
+        email: email,
       },
     });
   }
@@ -92,7 +94,13 @@ function People() {
                         <Button
                           variant="outlined"
                           className=" h-10"
-                          onClick={() => openViewDetails(people.user.username)}
+                          onClick={() =>
+                            openViewDetails(
+                              people.user.id,
+                              people.user.username,
+                              people.user.email
+                            )
+                          }
                         >
                           View Details
                         </Button>
