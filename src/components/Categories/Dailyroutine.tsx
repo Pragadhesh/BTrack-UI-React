@@ -14,7 +14,7 @@ function Dailyroutine() {
       try {
         const response = await axios.get(`${BACKEND_URL}recommendation`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+            authorization: `Bearer ${localStorage.getItem("idToken")}`,
           },
         });
         setAlerts(response.data);
@@ -27,7 +27,7 @@ function Dailyroutine() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -47,21 +47,6 @@ function Dailyroutine() {
     fetchData();
   }, []);
 
-  function getHealthColor(health: any) {
-    let healthColor = "";
-    if (health >= 0 && health <= 20) {
-      return "bg-red-500";
-    } else if (health > 20 && health < 40) {
-      return "bg-orange-500";
-    } else if (health >= 40 && health < 60) {
-      return "bg-yellow-500";
-    } else if (health >= 60 && health < 80) {
-      return "bg-green-500";
-    } else if (health >= 80 && health <= 100) {
-      return "bg-teal-500";
-    }
-    return healthColor;
-  }
   return (
     <div className="flex w-full h-full">
       {isLoading && (

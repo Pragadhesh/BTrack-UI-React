@@ -7,7 +7,6 @@ import {
   TextField,
 } from "@mui/material";
 import { Link } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
 import { useState } from "react";
 import PeopleList from "../../../interfaces/People";
 import axios from "axios";
@@ -55,7 +54,7 @@ function AddAssistant() {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+              authorization: `Bearer ${localStorage.getItem("idToken")}`,
             },
           }
         );
@@ -69,7 +68,7 @@ function AddAssistant() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -102,14 +101,16 @@ function AddAssistant() {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+              authorization: `Bearer ${localStorage.getItem("idToken")}`,
             },
           }
         );
-        peoplelist[index].status = "pending";
-        setIsLoading(false);
-        setIsAddAssistant(true);
-        handleOpen();
+        if (response.status === 200) {
+          peoplelist[index].status = "pending";
+          setIsLoading(false);
+          setIsAddAssistant(true);
+          handleOpen();
+        }
       } catch (err: any) {
         if (err.response.status === 401) {
           console.log("entered this method for refresh");
@@ -118,7 +119,7 @@ function AddAssistant() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -151,14 +152,16 @@ function AddAssistant() {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+              authorization: `Bearer ${localStorage.getItem("idToken")}`,
             },
           }
         );
-        peoplelist[index].status = "cancelled";
-        setIsLoading(false);
-        setIsCancelRequest(true);
-        handleOpen();
+        if (response.status === 200) {
+          peoplelist[index].status = "cancelled";
+          setIsLoading(false);
+          setIsCancelRequest(true);
+          handleOpen();
+        }
       } catch (err: any) {
         if (err.response.status === 401) {
           console.log("entered this method for refresh");
@@ -167,7 +170,7 @@ function AddAssistant() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -265,12 +268,12 @@ function AddAssistant() {
               </Box>
             </Modal>
           )}
-          {peoplelist.length == 0 && (
+          {peoplelist.length === 0 && (
             <div className="flex w-full h-full text-4xl text-sky-500 font-dancingscript justify-center items-center">
               No Assistants found
             </div>
           )}
-          {peoplelist.length != 0 && (
+          {peoplelist.length !== 0 && (
             <div className="flex flex-col w-full h-full pl-10 pr-10">
               <div className="grid grid-flow-row pt-10 pl-10 gap-5">
                 {peoplelist.map((people, index) => (
@@ -280,7 +283,7 @@ function AddAssistant() {
                         {people.user.username}
                       </div>
                       <div className="flex w-full h-full justify-end items-center p-5">
-                        {people.status == "pending" && (
+                        {people.status === "pending" && (
                           <Button
                             variant="outlined"
                             color="error"
@@ -290,7 +293,7 @@ function AddAssistant() {
                             Cancel Request
                           </Button>
                         )}
-                        {people.status != "pending" && (
+                        {people.status !== "pending" && (
                           <Button
                             variant="outlined"
                             color="primary"

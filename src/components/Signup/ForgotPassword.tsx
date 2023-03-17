@@ -63,7 +63,7 @@ function ForgotPassword(props: any) {
 
   return (
     <div>
-      {active == "step1" && (
+      {active === "step1" && (
         <div className="grid grid-cols w-full pl-16 pr-16 pt-12">
           <div className="flex w-full justify-start text-xl font-bold font-sans">
             Find your Account
@@ -120,7 +120,7 @@ function ForgotPassword(props: any) {
           </div>
         </div>
       )}
-      {active == "step2" && (
+      {active === "step2" && (
         <div className="grid grid-cols w-full pl-16 pr-16 pt-12">
           <div className="flex w-full justify-start text-xl font-bold font-sans">
             Find your Account
@@ -222,7 +222,7 @@ function ForgotPassword(props: any) {
           </div>
         </div>
       )}
-      {active == "step3" && (
+      {active === "step3" && (
         <div className="grid grid-cols w-full pl-16 pr-16 pt-40">
           <div className="flex w-full justify-center text-xl font-bold font-sans">
             Password verified successfully

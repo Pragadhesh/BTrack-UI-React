@@ -1,4 +1,4 @@
-import { Box, Button, Card, CircularProgress, Modal } from "@mui/material";
+import { Box, Button, CircularProgress, Modal } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -27,7 +27,6 @@ function Details() {
 
   const [notestitle, setNotesTitle] = useState("");
   const [notesdesscription, setNotesDescription] = useState("");
-  const [notesIsLoading, setNotesIsLoading] = useState(false);
   const [update, setIsUpdate] = useState(false);
 
   const [open, setOpen] = useState(false);
@@ -59,7 +58,7 @@ function Details() {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+              authorization: `Bearer ${localStorage.getItem("idToken")}`,
             },
           }
         );
@@ -76,7 +75,7 @@ function Details() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -122,7 +121,7 @@ function Details() {
       )}
       {!isLoading && (
         <div className="flex flex-col w-full h-full pr-10 pl-10">
-          {notes.length == 0 && alerts.length == 0 && (
+          {notes.length === 0 && alerts.length === 0 && (
             <div className="flex w-full h-full text-4xl text-sky-500 font-dancingscript justify-center items-center">
               No Information found
             </div>

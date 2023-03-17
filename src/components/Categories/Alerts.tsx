@@ -14,7 +14,7 @@ function Alerts() {
       try {
         const response = await axios.get(`${BACKEND_URL}alerts`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+            authorization: `Bearer ${localStorage.getItem("idToken")}`,
           },
         });
         setAlerts(response.data);
@@ -27,7 +27,7 @@ function Alerts() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );

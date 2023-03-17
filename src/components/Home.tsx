@@ -4,7 +4,6 @@ import Confirmation from "./Signup/Confirmation";
 import Login from "./Signup/Login";
 import Signup from "./Signup/Signup";
 import ForgotPassword from "./Signup/ForgotPassword";
-import { Routes, Route } from "react-router-dom";
 function Home(props: any) {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -36,7 +35,7 @@ function Home(props: any) {
           <div className="flex w-full pt-10 justify-center text-5xl font-solitreo text-sky-500 font-bold">
             B Track
           </div>
-          {active == "signup" && (
+          {active === "signup" && (
             <Signup
               email={email}
               username={username}
@@ -44,7 +43,7 @@ function Home(props: any) {
               updateUserInfo={updateUserInfo}
             />
           )}
-          {active == "signin" && (
+          {active === "signin" && (
             <Login
               email={email}
               username={username}
@@ -53,7 +52,7 @@ function Home(props: any) {
               checkLoginStatus={checkLogin}
             />
           )}
-          {active == "confirmation" && (
+          {active === "confirmation" && (
             <Confirmation
               email={email}
               username={username}
@@ -62,7 +61,7 @@ function Home(props: any) {
               checkLoginStatus={checkLogin}
             />
           )}
-          {active == "forgotpassword" && (
+          {active === "forgotpassword" && (
             <ForgotPassword
               email={email}
               username={username}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./App.css";
 import Home from "./components/Home";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Landing from "./components/Landing";
 import Skincare from "./components/Categories/Skincare";
 import Makeup from "./components/Categories/Makeup";
@@ -19,8 +19,6 @@ import Dailyroutine from "./components/Categories/Dailyroutine";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  let navigate = useNavigate();
 
   useEffect(() => {
     let status = localStorage.getItem("loggedIn");

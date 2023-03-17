@@ -48,7 +48,7 @@ export default function Confirmation(props: any) {
               axios
                 .post(`${BACKEND_URL}user/add`, null, {
                   headers: {
-                    Authorization: `Bearer ${result
+                    authorization: `Bearer ${result
                       .getIdToken()
                       .getJwtToken()}`,
                   },

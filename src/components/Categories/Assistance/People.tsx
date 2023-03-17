@@ -1,4 +1,4 @@
-import { Box, Button, Card, CircularProgress, Modal } from "@mui/material";
+import { Box, Button, Card, CircularProgress } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ function People() {
       try {
         const response = await axios.get(`${BACKEND_URL}assistants/people`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+            authorization: `Bearer ${localStorage.getItem("idToken")}`,
           },
         });
         setPeopleList(response.data);
@@ -31,7 +31,7 @@ function People() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -73,12 +73,12 @@ function People() {
       )}
       {!isLoading && (
         <div className="flex flex-col w-full h-full pr-10 pl-10">
-          {peoplelist.length == 0 && (
+          {peoplelist.length === 0 && (
             <div className="flex w-full h-full text-4xl text-sky-500 font-dancingscript justify-center items-center">
               No People found
             </div>
           )}
-          {peoplelist.length != 0 && (
+          {peoplelist.length !== 0 && (
             <div className="flex flex-col w-full h-full">
               <div className="flex justify-start font-playfair text-xl font-bold text-sky-700 pt-10">
                 People

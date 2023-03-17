@@ -43,14 +43,16 @@ function Manage() {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+              authorization: `Bearer ${localStorage.getItem("idToken")}`,
             },
           }
         );
-        peoplelist.splice(index, 1);
-        setIsLoading(false);
-        setIsDeleted(true);
-        handleOpen();
+        if (response.status === 200) {
+          peoplelist.splice(index, 1);
+          setIsLoading(false);
+          setIsDeleted(true);
+          handleOpen();
+        }
       } catch (err: any) {
         if (err.response.status === 401) {
           console.log("entered this method for refresh");
@@ -59,7 +61,7 @@ function Manage() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -85,7 +87,7 @@ function Manage() {
       try {
         const response = await axios.get(`${BACKEND_URL}assistants/all`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+            authorization: `Bearer ${localStorage.getItem("idToken")}`,
           },
         });
         setPeopleList(response.data);
@@ -98,7 +100,7 @@ function Manage() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -143,12 +145,12 @@ function Manage() {
               </Box>
             </Modal>
           )}
-          {peoplelist.length == 0 && (
+          {peoplelist.length === 0 && (
             <div className="flex w-full h-full text-4xl text-sky-500 font-dancingscript justify-center items-center">
               No Assistants found
             </div>
           )}
-          {peoplelist.length != 0 && (
+          {peoplelist.length !== 0 && (
             <div className="flex flex-col w-full h-full">
               <div className="flex justify-start font-playfair text-xl font-bold text-sky-700 pt-10">
                 My Assistants

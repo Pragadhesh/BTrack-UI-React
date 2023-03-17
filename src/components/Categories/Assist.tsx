@@ -1,15 +1,9 @@
-import {
-  Box,
-  Button,
-  ButtonGroup,
-  CircularProgress,
-  Modal,
-} from "@mui/material";
+import { Box, Button, ButtonGroup, CircularProgress } from "@mui/material";
 import { useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 
 function Assist() {
-  const [isLoading, setIsLoading] = useState(false);
+  const isLoading = false;
   const [activeButton, setActiveButton] = useState("people");
   const navigate = useNavigate();
 

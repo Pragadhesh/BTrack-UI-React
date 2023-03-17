@@ -55,7 +55,7 @@ function AddProduct(props: any) {
           `${BACKEND_URL}addproduct/${module}/${category}`,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+              authorization: `Bearer ${localStorage.getItem("idToken")}`,
             },
           }
         );
@@ -69,7 +69,7 @@ function AddProduct(props: any) {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -119,7 +119,7 @@ function AddProduct(props: any) {
         },
         {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+            authorization: `Bearer ${localStorage.getItem("idToken")}`,
           },
         }
       );
@@ -132,7 +132,7 @@ function AddProduct(props: any) {
         console.log("entered this method for refresh");
         const response = await axios.post(`${BACKEND_URL}user/refresh`, null, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+            authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
           },
         });
         localStorage.setItem("idToken", response.data.idToken);

@@ -2,11 +2,10 @@ import { Box, Button, CircularProgress, Modal } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import "./Shared.css";
 import { useEffect, useState } from "react";
-import { useAsyncError, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Routine from "./Shared/Routine";
-import AddProduct from "./Shared/AddProducts";
 import { BACKEND_URL } from "../../constants/backendurl";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { Products } from "../../interfaces/Products";
 
 const modalstyle = {
@@ -77,7 +76,7 @@ function Makeup() {
       try {
         const response = await axios.get(`${BACKEND_URL}product/makeup`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+            authorization: `Bearer ${localStorage.getItem("idToken")}`,
           },
         });
         setSkinCareItems(response.data);
@@ -90,7 +89,7 @@ function Makeup() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -131,7 +130,7 @@ function Makeup() {
                   health: uphealth,
                 },
                 headers: {
-                  Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+                  authorization: `Bearer ${localStorage.getItem("idToken")}`,
                 },
               });
 
@@ -170,7 +169,7 @@ function Makeup() {
         console.log("entered this method for refresh");
         const response = await axios.post(`${BACKEND_URL}user/refresh`, null, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+            authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
           },
         });
         localStorage.setItem("idToken", response.data.idToken);
@@ -210,7 +209,7 @@ function Makeup() {
                   },
                   {
                     headers: {
-                      Authorization: `Bearer ${localStorage.getItem(
+                      authorization: `Bearer ${localStorage.getItem(
                         "idToken"
                       )}`,
                     },
@@ -248,7 +247,7 @@ function Makeup() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -526,12 +525,12 @@ function Makeup() {
               Add Makeup Item
             </Button>
           </div>
-          {skincareitems.length == 0 && (
+          {skincareitems.length === 0 && (
             <div className="flex w-full h-full pt-20 text-4xl text-sky-500 font-dancingscript justify-center">
               No Items found
             </div>
           )}
-          {skincareitems.length != 0 &&
+          {skincareitems.length !== 0 &&
             skincareitems.map((category) => {
               return (
                 <div className="flex flex-col w-full pt-5">

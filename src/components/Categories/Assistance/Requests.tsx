@@ -45,14 +45,16 @@ function Requests() {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+              authorization: `Bearer ${localStorage.getItem("idToken")}`,
             },
           }
         );
-        peoplelist.splice(index, 1);
-        setIsLoading(false);
-        setIsAccepted(true);
-        handleOpen();
+        if (response.status === 200) {
+          peoplelist.splice(index, 1);
+          setIsLoading(false);
+          setIsAccepted(true);
+          handleOpen();
+        }
       } catch (err: any) {
         if (err.response.status === 401) {
           console.log("entered this method for refresh");
@@ -61,7 +63,7 @@ function Requests() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -94,14 +96,16 @@ function Requests() {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+              authorization: `Bearer ${localStorage.getItem("idToken")}`,
             },
           }
         );
-        peoplelist.splice(index, 1);
-        setIsLoading(false);
-        setIsDeleted(true);
-        handleOpen();
+        if (response.status === 200) {
+          peoplelist.splice(index, 1);
+          setIsLoading(false);
+          setIsDeleted(true);
+          handleOpen();
+        }
       } catch (err: any) {
         if (err.response.status === 401) {
           console.log("entered this method for refresh");
@@ -110,7 +114,7 @@ function Requests() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -136,7 +140,7 @@ function Requests() {
       try {
         const response = await axios.get(`${BACKEND_URL}assistants/requests`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+            authorization: `Bearer ${localStorage.getItem("idToken")}`,
           },
         });
         setPeopleList(response.data);
@@ -149,7 +153,7 @@ function Requests() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -208,12 +212,12 @@ function Requests() {
               </Box>
             </Modal>
           )}
-          {peoplelist.length == 0 && (
+          {peoplelist.length === 0 && (
             <div className="flex w-full h-full text-4xl text-sky-500 font-dancingscript justify-center items-center">
               No Requests found
             </div>
           )}
-          {peoplelist.length != 0 && (
+          {peoplelist.length !== 0 && (
             <div className="flex flex-col w-full h-full">
               <div className="flex justify-start font-playfair text-xl font-bold text-sky-700 pt-10">
                 Requests

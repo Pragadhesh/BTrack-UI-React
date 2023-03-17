@@ -1,19 +1,9 @@
-import {
-  Box,
-  Button,
-  CircularProgress,
-  Input,
-  InputBase,
-  Modal,
-  TextareaAutosize,
-  TextField,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Modal } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { BACKEND_URL } from "../../constants/backendurl";
 import NotesList from "../../interfaces/Notes";
 import "./Shared.css";
-import AddProduct from "./Shared/AddProducts";
 
 const modalstyle = {
   position: "absolute" as "absolute",
@@ -65,7 +55,7 @@ function Notes() {
       try {
         const response = await axios.get(`${BACKEND_URL}notes`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+            authorization: `Bearer ${localStorage.getItem("idToken")}`,
           },
         });
         setNotes(response.data);
@@ -78,7 +68,7 @@ function Notes() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -112,7 +102,7 @@ function Notes() {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+              authorization: `Bearer ${localStorage.getItem("idToken")}`,
             },
           }
         );
@@ -130,7 +120,7 @@ function Notes() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -163,7 +153,7 @@ function Notes() {
           },
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+              authorization: `Bearer ${localStorage.getItem("idToken")}`,
             },
           }
         );
@@ -181,7 +171,7 @@ function Notes() {
             null,
             {
               headers: {
-                Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+                authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
               },
             }
           );
@@ -209,7 +199,7 @@ function Notes() {
           id: upid,
         },
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("idToken")}`,
+          authorization: `Bearer ${localStorage.getItem("idToken")}`,
         },
       });
       if (response.status === 200) {
@@ -223,7 +213,7 @@ function Notes() {
         console.log("entered this method for refresh");
         const response = await axios.post(`${BACKEND_URL}user/refresh`, null, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
+            authorization: `Bearer ${localStorage.getItem("refreshToken")}`,
           },
         });
         localStorage.setItem("idToken", response.data.idToken);
@@ -324,12 +314,12 @@ function Notes() {
               Add Note
             </Button>
           </div>
-          {notes.length == 0 && (
+          {notes.length === 0 && (
             <div className="flex w-full h-full pt-20 text-4xl text-sky-500 font-dancingscript justify-center">
               No Notes found
             </div>
           )}
-          {notes.length != 0 && (
+          {notes.length !== 0 && (
             <div className="grid w-full grid-flow-row grid-cols-4 pt-5 gap-4 gap-y-7">
               {notes.map((note, index) => (
                 <div
