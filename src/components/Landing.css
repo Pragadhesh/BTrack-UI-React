@@ -45,3 +45,22 @@
 .activeassist:hover {
     background-color: rgba(0, 127, 255, 0.12);
 }
+
+.welcome {
+    background-image: url("../assets/images/welcome.JPG");
+    background-size: cover;
+}
+
+.waving-hand {
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+    background-image: url("../assets/images/waving-hand.png");
+}
+
+*:focus {
+    outline: none;
+  }
+  

@@ -18,10 +18,27 @@ const modalstyle = {
   p: 4,
 };
 
+const welcomemodalstyle = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 900,
+  height: 450,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  borderRadius: 2,
+  p: 4,
+};
+
 function Landing(props: any) {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [welcomeOpen, setWelcomeOpen] = useState(true);
+  const handlewelcomeOpen = () => setWelcomeOpen(true);
+  const handlewelcomeClose = () => setWelcomeOpen(false);
 
   const [username, setUsername] = useState("");
 
@@ -56,6 +73,39 @@ function Landing(props: any) {
 
   return (
     <div className="flex flex-col w-full h-screen">
+      <Modal open={welcomeOpen} onClose={handlewelcomeClose}>
+        <Box sx={welcomemodalstyle}>
+          <div className="grid grid-cols-3 w-full h-full">
+            <div className="flex w-full h-full col-span-2 welcome"></div>
+            <div className="flex w-full h-full">
+              <div className="grid grid-rows justify-center w-full h-full pt-20">
+                <div>
+                  <div className="flex justify-center text-xl font-dancingscript text-sky-500 font-bold">
+                    Hey {username.charAt(0).toUpperCase() + username.slice(1)}
+                    <span role="img" aria-label="waving-hand">
+                      👋
+                    </span>
+                  </div>
+                  <div className="flex pt-5 justify-center text-2xl font-solitreo text-sky-600 font-bold">
+                    Welcome to B Track
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <div className="flex text-sm">
+                    At B Track, we believe that beauty should be accessible to
+                    everyone. Empowering you to confidently express your unique
+                    style with personalized recommendations and inventory
+                    management.
+                  </div>
+                  <div className="flex justify-center text-xl font-dancingscript text-sky-500 font-bold pt-5">
+                    Start exploring now!
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </Box>
+      </Modal>
       <div className="flex w-full h-20 justify-between pl-10 pr-10 bg-gray-50">
         <div className="flex w-full pt-5 justify-start text-4xl font-solitreo text-sky-500 font-bold">
           B Track
